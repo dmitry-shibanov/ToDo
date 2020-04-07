@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:todo_app/pages/content_page.dart';
+import 'package:todo_app/util/custom_route.dart';
 
 import 'db/db_helper.dart';
 import 'model/todo.dart';
@@ -15,6 +17,19 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'ToDo'),
+      onGenerateRoute: (RouteSettings settings) {
+        final List<String> pathElements = settings.name.split('/');
+        if (pathElements[0] != '') {
+          return null;
+        }
+        if (pathElements[1] == 'todo') {
+          final int index = int.parse(pathElements[2]);
+          return CustomRoute<bool>(
+              builder: (BuildContext context) =>
+                  ToDoContent.Db(index));
+        }
+        return null;
+      },
     );
   }
 }
@@ -29,26 +44,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   ScrollController _controller;
 
   @override
   void initState() {
     _controller = ScrollController();
     _controller.addListener(() {
-    if (_controller.offset >= _controller.position.maxScrollExtent &&
-        !_controller.position.outOfRange) {
-      setState(() {
-        //"reached the bottom";
-      });
-    }
-    if (_controller.offset <= _controller.position.minScrollExtent &&
-        !_controller.position.outOfRange) {
-      setState(() {
-        //"reached the top";
-      });
-    }
-  });
+      if (_controller.offset >= _controller.position.maxScrollExtent &&
+          !_controller.position.outOfRange) {
+        setState(() {
+          //"reached the bottom";
+        });
+      }
+      if (_controller.offset <= _controller.position.minScrollExtent &&
+          !_controller.position.outOfRange) {
+        setState(() {
+          //"reached the top";
+        });
+      }
+    });
     super.initState();
   }
 
@@ -63,7 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: ListView.builder(controller: _controller,itemCount: 12,itemBuilder: _itemBuilder,),
+      body: ListView.builder(
+        controller: _controller,
+        itemCount: 12,
+        itemBuilder: _itemBuilder,
+      ),
       // body: StreamBuilder(
       //   stream: Stream.fromFuture(helper.open(getApplication)),
       //   builder: (BuildContext context, AsyncSnapshot<ToDo> snapshot) {
@@ -82,19 +100,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    return Card(
-      child: Row(
-        children: <Widget>[
-          Flexible(
-            flex: 1,
-            child: Icon(Icons.ac_unit),
-          ),
-          Flexible(
-            flex: 3,
-            child: Text('title'),
-          )
-        ],
+    return GestureDetector(
+      child: Card(
+        child: Row(
+          children: <Widget>[
+            Flexible(
+              flex: 1,
+              child: Icon(Icons.ac_unit),
+            ),
+            Flexible(
+              flex: 3,
+              child: Text('title'),
+            )
+          ],
+        ),
       ),
+      onTap: () => Navigator.pushNamed<bool>(context, '/todo/1'),
     );
   }
 }

@@ -1,0 +1,5 @@
+1. CRUD with todos
+2. Remind late with todos
+3. Setting (sort, language, remove items after day, store you activity for)
+4. Deep work with animations and other aspect of ui.
+5. Later after tests add automating testign with github workflow.
